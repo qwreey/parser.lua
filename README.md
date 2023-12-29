@@ -1,12 +1,6 @@
 # parser.lua - qwreey/parser
 
-todo
-{"'", "[["}, func
-style handler
-
-should impl
- - mustReachEnd
- - cache
+Simple parser utility
 
 ## Parser options
 
