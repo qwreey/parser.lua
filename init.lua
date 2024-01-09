@@ -1,6 +1,6 @@
   --[[lit-meta
     name = "qwreey/parser"
-    version = "2.1.4"
+    version = "2.1.5"
     dependencies = {}
     description = "Parsing support lib"
     tags = { "lua", "parsing" }
@@ -106,6 +106,7 @@ local function createParser(comps)
 		local orphans = comps.orphans
 		local tailing = comps.tailing
 		local noEOF = comps.noEOF
+		local ignoreIndexs = {}
 
 		-- Run init function
 		if init then
@@ -174,16 +175,25 @@ local function createParser(comps)
 				if verbose then
 					print("From "..pos..": "..regexs[minIndex].." ("..minStartAt.."~"..minFind[2]..")")
 				end
-				
+
 				-- Push orphans
-				if orphans and minStartAt-1 >= pos then
+				if minStartAt-1 >= pos then
 					local orphanString = string.sub(str,pos,minStartAt-1)
 					if orphanString ~= "" then
-						if verbose then print(" | Push orphans : "..orphanString) end
-						orphans(state,orphanString,false)
+						if orphans then
+							if verbose then print(" | Push orphans : "..orphanString) end
+							orphans(state,orphanString,false)
+						else
+							-- if no orphan handler. orphan is not allowed. end parsing
+							local result = state
+							if stop then
+								result = stop(state)
+							end
+							return result,pos - 1
+						end
 					end
 				end
-				
+
 				-- Call function and update position
 				local func = funcs[minIndex]
 				local nextPos, endup = func(state,str,pos,table.unpack(minFind,1,minFind.n))
@@ -203,7 +213,7 @@ local function createParser(comps)
 			else
 				-- no token found
 				if verbose then print("No more token") end
-				
+
 				-- if EOF is required
 				if not noEOF then
 					error("No token found")
@@ -533,7 +543,7 @@ local luaNonstrictValueParser = createParser {
 }
 
 return {
-	version = "2.1.4";
+	version = "2.1.5";
 	createParser = createParser;
 
 	-- parsers

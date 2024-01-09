@@ -51,11 +51,12 @@ local result,endPos = simpleParser("test${value1}test")
 print(result,endPos)
 -- { {t="str", v="test"}, {t="val", v="value1"}, {t="str", v="test"} }
 -- 17
-print(simpleParser("test${value1}test") == result) -- true (cached)
+print(simpleParser("test${value1}test") == result)
+-- true (cached)
 ```
 
 #### Extend - Formatter
-You can create simple formatter like below
+You can create simple formatter like below (append to above code)
 ```lua
 local function f(format)
 	local parsed = simpleParser(format)
@@ -115,6 +116,8 @@ print(simpleStringParser('"Hello world"')) -- 'Hello world'  13
 simpleStringParser.mustReachEnd = false
 print(simpleStringParser(' "Hello world" tailing characters'), 2) -- 'Hello world'  14
 ```
+
+## template
 
 ## subParser
 
